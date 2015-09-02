@@ -1,0 +1,23 @@
+import csv
+import numpy 
+
+ifile=open("ILallreviewvec.csv","rb")
+wfile=open("sveconly.csv","wb")
+csvwriter=csv.writer(wfile)
+data=csv.reader(ifile)
+dim=100
+
+for line in data:     
+	wlist=[]
+	
+	sum=0
+	for num in range(0,dim):
+		sum=sum+float(line[1+num])*float(line[1+num])
+	for num in range(0,dim):
+		if(numpy.sqrt(sum)!=0):
+			wlist.append(float(line[num+1])/numpy.sqrt(sum))
+		else:
+			wlist.append(float(line[num+1]))
+	csvwriter.writerow(wlist)
+ifile.close()
+wfile.close()
