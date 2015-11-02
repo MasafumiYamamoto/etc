@@ -2,6 +2,7 @@ import csv
 import collections
 import numpy
 import textedit
+import time
 
 print "dim"
 dim=raw_input()
@@ -22,7 +23,7 @@ ddic=collections.Counter()
 for line in ddata:
 	ddic[line[0]]=map(float,line[1:])
 dfile.close()
-print "dic fin",len(ddic),len(ddic["we"])
+print "dic fin",len(ddic),len(ddic["we"]),time.ctime()
 
 ##base data
 revfile=open("D:/Lresult/subrev_1000.csv","r")
@@ -38,7 +39,7 @@ for line in revdata:
 		if(num not in stoplist):
 			revvec[line[0]]=revvec[line[0]]+numpy.array(ddic[text[num]])
 revfile.close()
-print "rev fin",len(revvec)
+print "rev fin",len(revvec),time.ctime()
 
 ####comp data
 sfile=open("D:/Lresult/NVreview.csv","r")
@@ -59,10 +60,10 @@ for line in sdata:
 				if(num not in stoplist):
 					svec[line[2]]=svec[line[2]]+numpy.array(ddic[text[num]])
 	if(lnum%100000==0):
-		print lnum
+		print lnum,time.ctime()
 	lnum=lnum+1
 sfile.close()
-print "base din",len(svec)
+print "base din",len(svec),time.ctime()
 
 ###calc sim svec and revvec
 for rid in revid:
@@ -77,3 +78,5 @@ for rid in revid:
 				sim=numpy.dot(revvec[rid],svec[sid])/slen/rlen
 				writer.writerow([rid,sid,sim,revid[rid]])
 	wfile.close()
+
+print "fin",time.ctime()
