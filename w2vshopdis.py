@@ -12,13 +12,19 @@ pas="D:/Lresult/w2v/"
 #####load stopword
 stopfile=open("D:/Lresult/stopwords/over4word.csv","r")
 stopdata=csv.reader(stopfile)
-stoplist=[]
+stoplist=collections.Counter()
 for line in stopdata:
-	stoplist.append(line[0])
+	stoplist[line[0]]=1
 stopfile.close()
+stopfile=open("D:/Lresult/stopwords/b6list.csv","r")
+stopdata=csv.reader(stopfile)
+for line in stopdata:
+	stoplist[line[0]]=1
+stopfile.close()
+print "stop fin",len(stoplist),time.ctime()
 
 ####load vecfile
-dfile=open(pas+"scmodoki"+str(dim)+"_500.csv","r")
+dfile=open(pas+"scmodoki"+str(dim)+"_5.csv","r")
 ddata=csv.reader(dfile)
 ddic=collections.Counter()
 for line in ddata:
@@ -27,7 +33,7 @@ dfile.close()
 print "dic fin",len(ddic),len(ddic["we"]),time.ctime()
 
 ##base data
-revfile=open("D:/Lresult/s5/subrev_1000.csv","r")
+revfile=open("D:/Lresult/NV_s5/subrev_1000.csv","r")
 revdata=csv.reader(revfile)
 revdata.next()
 revid=collections.Counter()
@@ -72,9 +78,9 @@ sfile.close()
 print "base din",len(svec),time.ctime()
 
 ###calc sim svec and revvec
-os.mkdir(pas+"s5lres_o4t"+str(dim))
+os.mkdir(pas+"NVs5lres_o4b6t"+str(dim))
 for rid in revid:
-	wfile=open(pas+"s5lres_o4t"+str(dim)+"/"+rid+".csv","wb")
+	wfile=open(pas+"NVs5lres_o4b6t"+str(dim)+"/"+rid+".csv","wb")
 	writer=csv.writer(wfile)
 	writer.writerow(["revid","busid","sim","seikai"])
 	rlen=numpy.linalg.norm(revvec[rid])
