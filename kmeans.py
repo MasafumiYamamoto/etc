@@ -6,8 +6,8 @@ import glob
 import os
 import numpy
 
-pas="D:/Lresult/NV_s5/b6t100_LDA_business/"
-#os.mkdir(pas[:-1]+"_n")
+pas="D:/Lresult/NV_s5/b6t500_LSI_business/"
+os.mkdir(pas[:-1]+"_p")
 
 folder=glob.glob(pas+"*")
 for infile in folder:
@@ -26,7 +26,6 @@ for infile in folder:
 				revlist[line[0]]=vec/veclen
 			else:
 				revlist[line[0]]=vec
-
 			star[line[0]]=line[3]
 			revnum=revnum+1
 	ifile.close()
@@ -39,7 +38,7 @@ for infile in folder:
 		for num in range(0,len(revlist)):
 			label[revlist.keys()[num]]=labels[num]
 
-		wfile=open("D:/Lresult/NV_s5/b6t100_LDA_business_p/"+busname+".csv","wb")
+		wfile=open("D:/Lresult/NV_s5/b6t500_LSI_business_p/"+busname+".csv","wb")
 		writer=csv.writer(wfile)
 		rfile=open(infile,"r")
 		rdata=csv.reader(rfile)
