@@ -29,16 +29,26 @@ subidlist=collections.Counter()
 for line in subdata:
     subidlist[line[0]]=line[1]
 subfile.close()
-print "sub fin"
+print "sub fin",len(subidlist)
+
+###load buslist
+busfile=open(pas+"NVshoplist.csv","r")
+busdata=csv.reader(busfile)
+busdata.next()
+busidlist=collections.Counter()
+for line in busdata:
+    busidlist[line[0]]=1
+busfile.close()
+print "bus fin",len(busidlist)
 
 ###laod train bow
-busbowlist=glob.glob(pas+"NVbus/*")
+busbowlist=glob.glob(pas+"NVbusbow/*")
 bblist=collections.Counter()
 bblen=collections.Counter()
-for bus in busbowlist:
-    busname=bus[6:-4]###bus_id####
+for bus in busidlist:
+    busname=bus
     bblist[busname]=collections.Counter()
-    bfile=open(bus,"r")
+    bfile=open(pas+"NVbusbow/"+bus+".csv","r")
     bdata=csv.reader(bfile)
     for line in bdata:
         if(line[0] not in subidlist):
