@@ -21,13 +21,13 @@ for line in sdata:
 sfile.close()
 print "stop fin",time.ctime(),len(stoplist)
 
-###ake subrev list
+###ake subrev list,line[2]==seikai
 subfile=open(pas+"NV_s5/subrev_1000.csv","r")
 subdata=csv.reader(subfile)
 subdata.next()
 subidlist=collections.Counter()
 for line in subdata:
-    subidlist[line[0]]=line[1]
+    subidlist[line[0]]=line[2]
 subfile.close()
 print "sub fin",len(subidlist)
 
@@ -42,55 +42,52 @@ busfile.close()
 print "bus fin",len(busidlist)
 
 ###laod train bow
-busbowlist=glob.glob(pas+"NVbusbow/*")
-bblist=collections.Counter()
-bblen=collections.Counter()
+bbowlist=collections.Counter()
+bbowlen=collections.Counter()
 for bus in busidlist:
     busname=bus
-    bblist[busname]=collections.Counter()
+    bbowlist[busname]=collections.Counter()
     bfile=open(pas+"NVbusbow/"+bus+".csv","r")
     bdata=csv.reader(bfile)
+    bdata.next()
     for line in bdata:
-        if(line[0] not in subidlist):
-            doc=textedit.textedit(line[5])
-            doc=doc.lower().split()
-            for t in doc:
-                if(t not in stoplist):
-                    bblist[busname][t]=bblist[busname][t]+1
-    bblen[busname]=numpy.linalg.norm(bblist[busname].values())
+        if(line[0] not in stoplist):
+            bbowlist[busname][line[0]]=int(line[1])
+    le=0
+    for t in bbowlist[busname]:
+        le=le+bbowlist[busname][t]*bbowlist[busname][t]
+    bbowlen[busname]=numpy.sqrt(le)
     bfile.close()
-print "train fin",len(bblist),time.ctime()
+print "train fin",len(bbowlist),time.ctime()
 #print bblen
 
-###load subrev bow
-subfile=open(pas+"NV_s5/subrev_1000.csv","r")
-subdata=csv.reader(subfile)
-subdata.next()
 snum=0
-for line in subdata:
+###load subrev bow
+for sub in subidlist:
+    subfile=open(pas+"NV_s5/subrevbow/"+sub+".csv","r")
+    subdata=csv.reader(subfile)
+    subdata.next()
     snum=snum+1
     if(snum%100==0):
         print snum,time.ctime()
     sublist=collections.Counter()
-    doc=textedit.textedit(line[5])
-    doc=doc.lower().split()
-    for t in doc:
-        if(t not in stoplist):
-            sublist[t]=sublist[t]+1
-    ###print sublist
-    snum=snum+1
-    sublen=numpy.linalg.norm(sublist.values())
-    wfile=open(pas+"bowo4b6/"+line[0]+".csv","wb")
+    for line in subdata:
+        if(line[0] not in stoplist):
+            sublist[line[0]]=int(line[1])
+    le=0
+    for t in sublist:
+        le=le+sublist[t]*sublist[t]
+    sublen=numpy.sqrt(le)
+    wfile=open(pas+"bowo4b6/resnrnto4b6/"+sub+".csv","wb")
     writer=csv.writer(wfile)
     writer.writerow(["revid","busid","score","seikai"])
-    for bus in bblist:
-        #print bblist[bus]
+    for bus in busidlist:
         score=0
-        if(bblen[bus]*sublen!=0):
+        if(bbowlen[bus]*sublen!=0):
             for t in sublist:
-                if(t in bblist[bus]):
-                    score=score+bblist[bus][t]*sublist[t]
-            score=score/bblen[bus]/sublen
+                if(t in bbowlist[bus]):
+                    score=score+bbowlist[bus][t]*sublist[t]
+            score=score/bbowlen[bus]/sublen
       #  print line[0],bus,score,sublen,bblen[bus]
-        writer.writerow([line[0],bus,score,line[2]])
+        writer.writerow([sub,bus,score,subidlist[sub]])
     wfile.close()
